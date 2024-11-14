@@ -4,11 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PetsModule } from './modules/pets/pets.module';
 import { AdministrationModule } from './modules/administration/administration.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
-    AdministrationModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -23,7 +23,9 @@ import { AdministrationModule } from './modules/administration/administration.mo
       }),
       inject: [ConfigService],
     }),
+    FilesModule,
     PetsModule,
+    AdministrationModule,
   ],
   controllers: [],
   providers: [],

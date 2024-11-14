@@ -18,7 +18,7 @@ export class Owners {
   @Column()
   middle_name: string;
 
-  @Column()
+  @Column({ nullable: true })
   last_name: string;
 
   @Column({ unique: true })
@@ -27,8 +27,8 @@ export class Owners {
   @Column()
   address: string;
 
-  @Column({ type: 'int' })
-  phone: number;
+  @Column({ nullable: true })
+  phone: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

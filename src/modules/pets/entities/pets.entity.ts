@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -26,8 +27,12 @@ export class Pets {
   @Column()
   name: string;
 
-  @Column({ type: 'int', unique: true })
-  code: number;
+  @Column({
+    type: 'int',
+    unique: true,
+  })
+  @Generated('increment') // !No support some hosts
+  code: number;  
 
   @Column()
   age: number;
@@ -44,13 +49,13 @@ export class Pets {
   @Column()
   color: string;
 
-  @Column({ type: 'enum', enum: PetSpecies })
+  @Column({ type: 'enum', enum: AnimalSex })
   sex: AnimalSex;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @Column()

@@ -3,25 +3,24 @@ import {
   IsBoolean,
   IsDateString,
   IsEnum,
+  IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
-  Min,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { AnimalSex, PetSpecies } from '../entities';
 import { Transform, Type } from 'class-transformer';
 
-export class CreatePetDto {
+class PetDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsNumber()
+  @IsInt()
   @IsPositive()
-  @Min(0)
   age: number;
 
   @IsEnum(PetSpecies)
@@ -45,6 +44,7 @@ export class CreatePetDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @IsBoolean()
@@ -71,6 +71,10 @@ export class CreateOwnerDto {
   last_name?: string;
 
   @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @IsString()
   @IsNotEmpty()
   dni: string;
 
@@ -80,6 +84,10 @@ export class CreateOwnerDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreatePetDto)
-  pets: CreatePetDto[];
+  @Type(() => PetDto)
+  pets: PetDto[];
+}
+export class CreatePetDto extends PetDto {
+  @IsUUID()
+  ownderId: string;
 }
