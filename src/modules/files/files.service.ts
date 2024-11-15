@@ -33,7 +33,7 @@ export class FilesService {
     return path;
   }
 
-  async saveFile(file: Express.Multer.File): Promise<string> {
+  async saveFile(file: Express.Multer.File): Promise<{ filename: string }> {
     const fileExtension = file.mimetype.split('/')[1];
     const savedFileName = `${uuid()}.${fileExtension}`;
     const path = join(
@@ -49,14 +49,23 @@ export class FilesService {
     );
     try {
       await writeFile(path, file.buffer);
-      return savedFileName;
+      return { filename: savedFileName };
     } catch (error) {
       throw new InternalServerErrorException('Error saving file');
     }
   }
 
-  deleteFiles(files: string[], folder: ValidFolder): void {
-    const tempDir = join(__dirname, '..', '..', '..', 'static', folder);
+  deleteFiles(files: string[]): void {
+    const tempDir = join(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'static',
+      'uploads',
+      'pets',
+      'images',
+    );
     for (const file of files) {
       const filePath = join(tempDir, file);
       if (existsSync(filePath)) {

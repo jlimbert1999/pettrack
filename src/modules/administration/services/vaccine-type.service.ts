@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { PaginationParamsDto } from 'src/common';
+import { PaginationParamsDto } from 'src/modules/common';
 import { VaccineTypes } from '../entities';
 import {
   CreateVaccineTypeDto,

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateVaccineTypeDto } from '../dtos/vaccine-type.dto';
 import { VaccineTypeService } from '../services/vaccine-type.service';
-import { PaginationParamsDto } from 'src/common';
+import { PaginationParamsDto } from 'src/modules/common';
 
 @Controller('vaccine-types')
 export class VaccineTypeController {

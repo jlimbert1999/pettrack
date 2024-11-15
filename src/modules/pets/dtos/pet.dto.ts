@@ -1,7 +1,8 @@
 import {
+  ArrayMinSize,
   IsArray,
   IsBoolean,
-  IsDateString,
+  IsDate,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -13,8 +14,13 @@ import {
 } from 'class-validator';
 import { AnimalSex, PetSpecies } from '../entities';
 import { Transform, Type } from 'class-transformer';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 
 class PetDto {
+  @IsUUID()
+  @IsOptional()
+  id?: string;
+
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -43,15 +49,14 @@ class PetDto {
   sex: AnimalSex;
 
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   description: string;
 
   @IsBoolean()
   is_neutered: boolean;
 
-  @IsDateString()
-  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  @Transform(({ value }) => value && new Date(value))
   @IsOptional()
   neuter_date?: Date;
 }
@@ -66,7 +71,6 @@ export class CreateOwnerDto {
   middle_name: string;
 
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   last_name?: string;
 
@@ -85,8 +89,12 @@ export class CreateOwnerDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PetDto)
+  @ArrayMinSize(1)
   pets: PetDto[];
 }
+
+export class UpdateOwnerDto extends PartialType(CreateOwnerDto) {}
+
 export class CreatePetDto extends PetDto {
   @IsUUID()
   ownderId: string;

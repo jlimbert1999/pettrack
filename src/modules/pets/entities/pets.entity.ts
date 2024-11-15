@@ -32,7 +32,7 @@ export class Pets {
     unique: true,
   })
   @Generated('increment') // !No support some hosts
-  code: number;  
+  code: number;
 
   @Column()
   age: number;

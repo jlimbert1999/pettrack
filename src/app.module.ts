@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PetsModule } from './modules/pets/pets.module';
 import { AdministrationModule } from './modules/administration/administration.module';
 import { FilesModule } from './modules/files/files.module';
+import { EnvConfig } from './config/env.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, load: [EnvConfig] }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
