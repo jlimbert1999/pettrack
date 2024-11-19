@@ -1,12 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { existsSync, renameSync, unlinkSync } from 'fs';
-import { writeFile } from 'fs/promises';
+import { existsSync, unlinkSync } from 'fs';
+import { unlink, writeFile, access } from 'fs/promises';
 import { join } from 'path';
 import { v4 as uuid } from 'uuid';
 
@@ -16,17 +12,7 @@ export class FilesService {
   constructor(private configService: ConfigService) {}
 
   getStaticFile(filename: string) {
-    const path = join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'static',
-      'uploads',
-      'pets',
-      'images',
-      filename,
-    );
+    const path = join(__dirname, '..', '..', '..', 'static', 'uploads', 'pets', 'images', filename);
     if (!existsSync(path)) {
       throw new BadRequestException(`No file found with ${filename}`);
     }
@@ -36,17 +22,7 @@ export class FilesService {
   async saveFile(file: Express.Multer.File): Promise<{ filename: string }> {
     const fileExtension = file.mimetype.split('/')[1];
     const savedFileName = `${uuid()}.${fileExtension}`;
-    const path = join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'static',
-      'uploads',
-      'pets',
-      'images',
-      savedFileName,
-    );
+    const path = join(__dirname, '..', '..', '..', 'static', 'uploads', 'pets', 'images', savedFileName);
     try {
       await writeFile(path, file.buffer);
       return { filename: savedFileName };
@@ -55,22 +31,17 @@ export class FilesService {
     }
   }
 
-  deleteFiles(files: string[]): void {
-    const tempDir = join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'static',
-      'uploads',
-      'pets',
-      'images',
-    );
-    for (const file of files) {
-      const filePath = join(tempDir, file);
-      if (existsSync(filePath)) {
-        unlinkSync(filePath);
+  async deleteFiles(files: string[]) {
+    const tempDir = join(__dirname, '..', '..', '..', 'static', 'uploads', 'pets', 'images');
+    try {
+      for (const file of files) {
+        const filePath = join(tempDir, file);
+        await access(filePath);
+        await unlink(filePath);
       }
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
     }
   }
 

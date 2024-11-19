@@ -1,4 +1,4 @@
-import { Vaccinations } from 'src/modules/pets/entities';
+import { Vaccinations } from 'src/modules/pets-management/entities';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
