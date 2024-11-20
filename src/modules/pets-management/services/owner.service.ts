@@ -23,9 +23,11 @@ export class OwnerService {
       .skip(offset)
       .orderBy('owner.createdAt', 'DESC');
     if (term) {
-      query.where(`CONCAT(owner.first_name, ' ', owner.middle_name, ' ', COALESCE(owner.last_name, '')) ILIKE :term `, {
-        term: `%${term}%`,
-      });
+      query
+        .where(`CONCAT(owner.first_name, ' ', owner.middle_name, ' ', COALESCE(owner.last_name, '')) ILIKE :name`, {
+          name: `%${term}%`,
+        })
+        .orWhere('owner.dni ILIKE :dni', { dni: `%${term}%` });
     }
     const [owners, length] = await query.getManyAndCount();
     return { owners: owners.map((owner) => this._plainOwner(owner)), length };
@@ -41,7 +43,6 @@ export class OwnerService {
       const createdPet = await this.ownerRepository.save(newOnwner);
       return this._plainOwner(createdPet);
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }
@@ -79,7 +80,6 @@ export class OwnerService {
       this.fileService.deleteFiles(imagesToDelete);
       return this._plainOwner(updatedOwner);
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }

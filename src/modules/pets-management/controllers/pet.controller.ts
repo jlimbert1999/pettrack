@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { PaginationParamsDto } from 'src/modules/common';
 import { PetService } from '../services/pet.service';
 import { CreateOwnerDto, CreatePetDto, UpdateOwnerDto } from '../dtos';
@@ -22,8 +14,12 @@ export class PetController {
 
   @Post()
   createPet(@Body() petDto: CreatePetDto) {
-    return this.petService.createPet(petDto);
+    return this.petService.create(petDto);
   }
 
-
+  @Get(':id')
+  getDetail(@Param('id') id: string) {
+    console.log(id);
+    return this.petService.getDetail(id);
+  }
 }

@@ -6,6 +6,8 @@ import { PetsManagementModule } from './modules/pets-management/pets-management.
 import { AdministrationModule } from './modules/administration/administration.module';
 import { FilesModule } from './modules/files/files.module';
 import { EnvConfig } from './config/env.config';
+import { UserModule } from './modules/users/user.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { EnvConfig } from './config/env.config';
     FilesModule,
     PetsManagementModule,
     AdministrationModule,
+    UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
