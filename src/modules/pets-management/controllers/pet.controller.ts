@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { PaginationParamsDto } from 'src/modules/common';
 import { PetService } from '../services/pet.service';
-import { CreateOwnerDto, CreatePetDto, UpdateOwnerDto } from '../dtos';
+import { CreatePetDto } from '../dtos';
 
 @Controller('pets')
 export class PetController {
@@ -19,7 +19,6 @@ export class PetController {
 
   @Get(':id')
   getDetail(@Param('id') id: string) {
-    console.log(id);
     return this.petService.getDetail(id);
   }
 }

@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 
 import { Users, UserRole } from 'src/modules/users/entities/user.entity';
 import { jwtPayload, menuFrontend } from './interfaces';
-import { MENU_FRONTEND } from './constants/menu';
+import { MENU_FRONTEND } from './constants/menu-frontend';
 import { AuthDto } from './dtos/auth.dto';
 
 @Injectable()

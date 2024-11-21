@@ -1,13 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsInt,
-  IsPositive,
-  Min,
-  Max,
-  IsOptional,
-  IsString,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsInt, IsPositive, Min, Max, IsOptional, IsString, IsNotEmpty } from 'class-validator';
 
 export class PaginationParamsDto {
   @Type(() => Number)
@@ -22,7 +14,7 @@ export class PaginationParamsDto {
   @IsInt()
   @Min(0)
   @IsOptional()
-  offset: number=0;
+  offset: number = 0;
 
   @IsOptional()
   @IsString()

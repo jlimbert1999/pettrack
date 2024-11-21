@@ -1,1 +1,3 @@
-export * from './vaccine-types.entity';
+export * from './types-treatments';
+export * from './medical-center.entity';
+export * from './breeds.entity';

@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { CreateVaccineTypeDto } from '../dtos/vaccine-type.dto';
-import { VaccineTypeService } from '../services/vaccine-type.service';
+import { CreateMedicalCenterDto } from '../dtos/medical-center.dto';
+import { MedicalCenterService } from '../services/medical-center.service';
 import { PaginationParamsDto } from 'src/modules/common';
 
-@Controller('vaccine-types')
-export class VaccineTypeController {
-  constructor(private vaccineTypeService: VaccineTypeService) {}
+@Controller('centers')
+export class MedicalCenterController {
+  constructor(private vaccineTypeService: MedicalCenterService) {}
 
   @Get()
   findAll(@Query() queryParams: PaginationParamsDto) {
@@ -13,15 +13,12 @@ export class VaccineTypeController {
   }
 
   @Post()
-  create(@Body() vaccineTypeDto: CreateVaccineTypeDto) {
+  create(@Body() vaccineTypeDto: CreateMedicalCenterDto) {
     return this.vaccineTypeService.create(vaccineTypeDto);
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() vaccineTypeDto: CreateVaccineTypeDto,
-  ) {
+  update(@Param('id') id: string, @Body() vaccineTypeDto: CreateMedicalCenterDto) {
     return this.vaccineTypeService.update(+id, vaccineTypeDto);
   }
 }

@@ -1,9 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateVaccineTypeDto {
+export class CreateMedicalCenterDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 }
-export class UpdateVaccineTypeDto extends PartialType(CreateVaccineTypeDto) {}
+export class UpdateMedicalCenterDto extends PartialType(CreateMedicalCenterDto) {}

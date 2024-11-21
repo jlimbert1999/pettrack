@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Owners, Pets, Vaccinations } from './entities';
-import { PetService } from './services/pet.service';
-import { PetController } from './controllers/pet.controller';
+
+import { Owners, Pets, Treatments } from './entities';
 import { FilesModule } from '../files/files.module';
-import { OwnerService } from './services/owner.service';
-import { OwnerController } from './controllers/owner.controller';
+import { OwnerController, PetController } from './controllers';
+import { OwnerService, PetService, VaccinationService } from './services';
+import { AdministrationModule } from '../administration/administration.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Owners, Pets, Vaccinations]), FilesModule],
+  imports: [TypeOrmModule.forFeature([Owners, Pets, Treatments]), FilesModule, AdministrationModule],
   controllers: [PetController, OwnerController],
-  providers: [PetService, OwnerService],
+  providers: [PetService, OwnerService, VaccinationService],
 })
 export class PetsManagementModule {}

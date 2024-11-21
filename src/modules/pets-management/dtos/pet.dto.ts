@@ -4,17 +4,16 @@ import {
   IsBoolean,
   IsDate,
   IsEnum,
-  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { AnimalSex, PetSpecies } from '../entities';
+import { AnimalSex } from '../entities';
 import { Transform, Type } from 'class-transformer';
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/mapped-types';
 
 class PetDto {
   @IsUUID()
@@ -25,21 +24,13 @@ class PetDto {
   @IsNotEmpty()
   name: string;
 
-  @IsInt()
-  @IsPositive()
-  age: number;
-
-  @IsEnum(PetSpecies)
-  species: PetSpecies;
-
   @IsString()
   @IsNotEmpty()
   @IsOptional()
   image?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  breed: string;
+  @IsNumber()
+  breedId: number;
 
   @IsString()
   @IsNotEmpty()
@@ -59,6 +50,11 @@ class PetDto {
   @Transform(({ value }) => value && new Date(value))
   @IsOptional()
   neuter_date?: Date;
+
+  @IsDate()
+  @Transform(({ value }) => value && new Date(value))
+  @IsOptional()
+  birthDate?: Date;
 }
 
 export class CreateOwnerDto {

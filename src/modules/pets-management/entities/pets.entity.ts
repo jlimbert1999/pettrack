@@ -1,19 +1,8 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Generated,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Owners } from './owners.entity';
-import { Vaccinations } from './vaccinations.entity';
+import { Treatments } from './treatments.entity';
+import { Breeds } from 'src/modules/administration/entities/breeds.entity';
 
-export enum PetSpecies {
-  feline = 'felino',
-  canine = 'canino',
-}
 export enum AnimalSex {
   male = 'macho',
   female = 'hembra',
@@ -34,17 +23,11 @@ export class Pets {
   @Generated('increment') // !No support some hosts
   code: number;
 
-  @Column()
-  age: number;
-
-  @Column({ type: 'enum', enum: PetSpecies })
-  species: PetSpecies;
+  @Column({ type: 'timestamptz', nullable: true })
+  birthDate: Date | null;
 
   @Column({ nullable: true })
   image: string | null;
-
-  @Column()
-  breed: string;
 
   @Column()
   color: string;
@@ -56,7 +39,7 @@ export class Pets {
   createdAt: Date;
 
   @Column({ nullable: true })
-  description: string;
+  description: string | null;
 
   @Column()
   is_neutered: boolean;
@@ -64,9 +47,12 @@ export class Pets {
   @Column({ type: 'timestamptz', nullable: true })
   neuter_date: Date | null;
 
+  @ManyToOne(() => Breeds, (breed) => breed.pets, { eager: true })
+  breed: Breeds;
+
   @ManyToOne(() => Owners, (owner) => owner.pets, { onDelete: 'CASCADE' })
   owner: Owners;
 
-  @OneToMany(() => Vaccinations, (vaccination) => vaccination.pet)
-  vaccinations: Vaccinations[];
+  @OneToMany(() => Treatments, (treatment) => treatment.pet)
+  treatments: Treatments[];
 }

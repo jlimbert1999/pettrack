@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { PetsManagementModule } from './modules/pets-management/pets-management.module';
 import { AdministrationModule } from './modules/administration/administration.module';
 import { FilesModule } from './modules/files/files.module';
-import { EnvConfig } from './config/env.config';
 import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { EnvConfig } from './config/env.config';
 
 @Module({
   imports: [
