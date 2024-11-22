@@ -4,8 +4,8 @@ import {
   IsBoolean,
   IsDate,
   IsEnum,
+  IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -29,7 +29,8 @@ class PetDto {
   @IsOptional()
   image?: string;
 
-  @IsNumber()
+  @IsInt()
+  @Type(() => Number)
   breedId: number;
 
   @IsString()

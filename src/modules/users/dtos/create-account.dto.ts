@@ -19,7 +19,8 @@ export class CreateUserDto {
   roles?: UserRole[];
 
   @IsBoolean()
-  isActive: boolean;
+  @IsOptional()
+  isActive?: boolean;
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}

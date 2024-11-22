@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Breeds } from '../entities';
+import { Breeds, Species } from '../entities';
 import { PaginationParamsDto } from 'src/modules/common';
 import { CreateBreedDto, UpdateBreedDto } from '../dtos';
 
@@ -35,5 +35,13 @@ export class BreedService {
       throw new BadRequestException(`Selected element don't exist`);
     }
     return await this.breedRepository.save(medicalCenterDB);
+  }
+
+  async getSpecies() {
+    return await this.breedRepository.createQueryBuilder('breeds').select('DISTINCT breeds.species').getRawMany();
+  }
+
+  async getBySpecies(species?: Species) {
+    return await this.breedRepository.find({ ...(species ? { where: { species: species } } : {}) });
   }
 }

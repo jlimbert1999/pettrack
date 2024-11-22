@@ -13,6 +13,6 @@ export class RoleGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user: Users = request['user'];
     if (!user) throw new InternalServerErrorException('user not found in request');
-    return roles.every((role) => user.roles.includes(role));
+    return roles.some((role) => user.roles.includes(role));
   }
 }

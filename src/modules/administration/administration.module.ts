@@ -9,6 +9,6 @@ import { BreedService, MedicalCenterService, TypeTreatmentService } from './serv
   imports: [TypeOrmModule.forFeature([TypesTreatments, MedicalCenter, Breeds])],
   controllers: [MedicalCenterController, TypeTreatmentController, BreedController],
   providers: [MedicalCenterService, TypeTreatmentService, BreedService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, BreedService],
 })
 export class AdministrationModule {}

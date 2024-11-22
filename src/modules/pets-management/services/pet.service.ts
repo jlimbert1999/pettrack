@@ -1,12 +1,12 @@
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, ILike, Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 import { FilesService } from 'src/modules/files/files.service';
-import { CreateOwnerDto, CreatePetDto, UpdateOwnerDto } from '../dtos';
-import { PaginationParamsDto } from 'src/modules/common';
-import { Owners, Pets } from '../entities';
 import { Breeds } from 'src/modules/administration/entities';
+import { PaginationParamsDto } from 'src/modules/common';
+import { CreatePetDto } from '../dtos';
+import { Owners, Pets } from '../entities';
 
 @Injectable()
 export class PetService {
@@ -18,21 +18,17 @@ export class PetService {
   ) {}
 
   async create(petDto: CreatePetDto) {
-    try {
-      const { ownderId, breedId, ...props } = petDto;
-      const [owner, breed] = await Promise.all([
-        this.ownerRepository.preload({ id: ownderId }),
-        this.breedRepository.preload({ id: breedId }),
-      ]);
-      if (!owner || !breed) {
-        throw new BadRequestException('Datos incorrecto: Propietario / Raza');
-      }
-      const newPet = this.petRepository.create({ ...props, owner, breed });
-      const createdPet = await this.petRepository.save(newPet);
-      return createdPet;
-    } catch (error) {
-      throw new InternalServerErrorException();
+    const { ownderId, breedId, ...props } = petDto;
+    const [owner, breed] = await Promise.all([
+      this.ownerRepository.preload({ id: ownderId }),
+      this.breedRepository.preload({ id: breedId }),
+    ]);
+    if (!owner || !breed) {
+      throw new BadRequestException('Datos incorrectos: Propietario / Raza');
     }
+    const newPet = this.petRepository.create({ ...props, owner, breed });
+    const createdPet = await this.petRepository.save(newPet);
+    return createdPet;
   }
 
   async findAll({ limit, offset, term }: PaginationParamsDto) {

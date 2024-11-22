@@ -5,7 +5,7 @@ import { CreateOwnerDto, UpdateOwnerDto } from '../dtos';
 
 @Controller('owners')
 export class OwnerController {
-  constructor(private ownerService: OwnerService) {}
+  constructor(private ownerService: OwnerService, ) {}
 
   @Get()
   findOwners(@Query() queryParams: PaginationParamsDto) {
@@ -21,4 +21,5 @@ export class OwnerController {
   update(@Param('id') id: string, @Body() ownerDto: UpdateOwnerDto) {
     return this.ownerService.update(id, ownerDto);
   }
+
 }

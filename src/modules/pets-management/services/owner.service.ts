@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { FilesService } from 'src/modules/files/files.service';
+import { Breeds } from 'src/modules/administration/entities';
 import { PaginationParamsDto } from 'src/modules/common';
 import { CreateOwnerDto, UpdateOwnerDto } from '../dtos';
 import { Pets, Owners } from '../entities';
@@ -12,6 +13,7 @@ export class OwnerService {
   constructor(
     @InjectRepository(Pets) private petRepository: Repository<Pets>,
     @InjectRepository(Owners) private ownerRepository: Repository<Owners>,
+    @InjectRepository(Breeds) private breedRepository: Repository<Breeds>,
     private fileService: FilesService,
   ) {}
 
@@ -19,6 +21,7 @@ export class OwnerService {
     const query = this.ownerRepository
       .createQueryBuilder('owner')
       .leftJoinAndSelect('owner.pets', 'pets')
+      .leftJoinAndSelect('pets.breed', 'breed')
       .take(limit)
       .skip(offset)
       .orderBy('owner.createdAt', 'DESC');
@@ -38,7 +41,10 @@ export class OwnerService {
       const { pets, ...props } = ownerDto;
       const newOnwner = this.ownerRepository.create({
         ...props,
-        pets: pets.map((pet) => this.petRepository.create(pet)),
+        pets: pets.map((pet) => ({
+          ...pet,
+          breed: this.breedRepository.create({ id: pet.breedId }),
+        })),
       });
       const createdPet = await this.ownerRepository.save(newOnwner);
       return this._plainOwner(createdPet);
@@ -61,18 +67,27 @@ export class OwnerService {
         pets: [
           // Update current pets if new dto containd pet id
           ...ownderDb.pets.map((pet) => {
-            const newPet = ownerDto.pets.find(({ id }) => pet.id === id);
-            if (!newPet) return pet;
+            const updatedPet = ownerDto.pets.find(({ id }) => pet.id === id);
+            if (!updatedPet) return pet;
             // Remove unused image
-            if (newPet.image !== undefined && pet.image && pet.image !== newPet.image) {
+            if (updatedPet.image !== undefined && pet.image && pet.image !== updatedPet.image) {
               imagesToDelete.push(pet.image);
             }
-            return this.petRepository.create({ ...pet, ...newPet });
+            return this.petRepository.create({
+              ...pet,
+              ...updatedPet,
+              breed: this.breedRepository.create({ id: updatedPet.breedId }),
+            });
           }),
           // Create new pet if not exist in array db
           ...pets
             .filter((pet) => !ownderDb.pets.some(({ id }) => id === pet.id))
-            .map((pet) => this.petRepository.create(pet)),
+            .map(({ breedId, ...petProps }) =>
+              this.petRepository.create({
+                ...petProps,
+                breed: this.breedRepository.create({ id: breedId }),
+              }),
+            ),
         ],
         ...props,
       });

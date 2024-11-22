@@ -35,9 +35,6 @@ export class Pets {
   @Column({ type: 'enum', enum: AnimalSex })
   sex: AnimalSex;
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
-
   @Column({ nullable: true })
   description: string | null;
 
@@ -47,7 +44,10 @@ export class Pets {
   @Column({ type: 'timestamptz', nullable: true })
   neuter_date: Date | null;
 
-  @ManyToOne(() => Breeds, (breed) => breed.pets, { eager: true })
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @ManyToOne(() => Breeds, (breed) => breed.pets, { eager: true, nullable: false })
   breed: Breeds;
 
   @ManyToOne(() => Owners, (owner) => owner.pets, { onDelete: 'CASCADE' })
