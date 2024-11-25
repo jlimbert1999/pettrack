@@ -5,36 +5,20 @@ import { Brackets, Repository } from 'typeorm';
 import { FilesService } from 'src/modules/files/files.service';
 import { Breeds } from 'src/modules/administration/entities';
 import { PaginationParamsDto } from 'src/modules/common';
-import { CreatePetDto } from '../dtos';
 import { Owners, Pets } from '../entities';
 
 @Injectable()
 export class PetService {
   constructor(
     @InjectRepository(Pets) private petRepository: Repository<Pets>,
-    @InjectRepository(Owners) private ownerRepository: Repository<Owners>,
-    @InjectRepository(Breeds) private breedRepository: Repository<Breeds>,
     private fileService: FilesService,
   ) {}
-
-  async create(petDto: CreatePetDto) {
-    const { ownderId, breedId, ...props } = petDto;
-    const [owner, breed] = await Promise.all([
-      this.ownerRepository.preload({ id: ownderId }),
-      this.breedRepository.preload({ id: breedId }),
-    ]);
-    if (!owner || !breed) {
-      throw new BadRequestException('Datos incorrectos: Propietario / Raza');
-    }
-    const newPet = this.petRepository.create({ ...props, owner, breed });
-    const createdPet = await this.petRepository.save(newPet);
-    return createdPet;
-  }
 
   async findAll({ limit, offset, term }: PaginationParamsDto) {
     const query = this.petRepository
       .createQueryBuilder('pet')
       .leftJoinAndSelect('pet.owner', 'owner')
+      .leftJoinAndSelect('pet.breed', 'breed')
       .take(limit)
       .skip(offset)
       .orderBy('pet.createdAt', 'DESC');

@@ -17,5 +17,5 @@ export class Treatments {
   pet: Pets;
 
   @ManyToOne(() => TypesTreatments, (type) => type.treatments)
-  type: TypesTreatments;
+  typeTreatment: TypesTreatments;
 }

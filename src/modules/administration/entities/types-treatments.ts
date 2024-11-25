@@ -20,6 +20,6 @@ export class TypesTreatments {
   @Column()
   name: string;
 
-  @OneToMany(() => Treatments, (treatment) => treatment.type)
+  @OneToMany(() => Treatments, (treatment) => treatment.typeTreatment)
   treatments: Treatments[];
 }

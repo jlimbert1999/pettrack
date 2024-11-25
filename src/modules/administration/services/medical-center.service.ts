@@ -36,4 +36,8 @@ export class MedicalCenterService {
     }
     return await this.medicalCenterRepository.save(medicalCenterDB);
   }
+
+  async getCenters() {
+    return await this.medicalCenterRepository.find({});
+  }
 }

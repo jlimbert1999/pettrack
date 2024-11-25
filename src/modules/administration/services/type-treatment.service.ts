@@ -4,17 +4,17 @@ import { Repository } from 'typeorm';
 
 import { PaginationParamsDto } from 'src/modules/common';
 import { CreateTypeTreatmentDto, UpdateTypeTreatmentDto } from '../dtos';
-import { TypesTreatments } from '../entities';
+import { TreatmentCategory, TypesTreatments } from '../entities';
 
 @Injectable()
 export class TypeTreatmentService {
   constructor(
     @InjectRepository(TypesTreatments)
-    private vaccineTypeRepository: Repository<TypesTreatments>,
+    private typeTreatmentRepository: Repository<TypesTreatments>,
   ) {}
 
   async findAll({ limit, offset }: PaginationParamsDto) {
-    const [treatments, length] = await this.vaccineTypeRepository.findAndCount({
+    const [treatments, length] = await this.typeTreatmentRepository.findAndCount({
       take: limit,
       skip: offset,
     });
@@ -22,18 +22,29 @@ export class TypeTreatmentService {
   }
 
   async create(treatmentDto: CreateTypeTreatmentDto) {
-    const newTypeTreatment = this.vaccineTypeRepository.create(treatmentDto);
-    return await this.vaccineTypeRepository.save(newTypeTreatment);
+    const newTypeTreatment = this.typeTreatmentRepository.create(treatmentDto);
+    return await this.typeTreatmentRepository.save(newTypeTreatment);
   }
 
   async update(id: number, treatmentDto: UpdateTypeTreatmentDto) {
-    const typeTreatment = await this.vaccineTypeRepository.preload({
+    const typeTreatment = await this.typeTreatmentRepository.preload({
       id,
       ...treatmentDto,
     });
     if (!typeTreatment) {
       throw new BadRequestException(`Selected element don't exist`);
     }
-    return await this.vaccineTypeRepository.save(typeTreatment);
+    return await this.typeTreatmentRepository.save(typeTreatment);
+  }
+
+  async getCategories() {
+    return await this.typeTreatmentRepository
+      .createQueryBuilder('types')
+      .select('DISTINCT types.category')
+      .getRawMany();
+  }
+
+  async getTreatments(category?: TreatmentCategory) {
+    return this.typeTreatmentRepository.find({ ...(category && { where: { category } }) });
   }
 }

@@ -4,7 +4,7 @@ import { PaginationParamsDto } from 'src/modules/common';
 import { BreedService } from 'src/modules/administration/services';
 import { Species } from 'src/modules/administration/entities';
 import { PetService } from '../services/pet.service';
-import { CreatePetDto } from '../dtos';
+import { TreatmentService } from '../services';
 
 @Controller('pets')
 export class PetController {
@@ -16,11 +16,6 @@ export class PetController {
   @Get()
   findAll(@Query() queryParams: PaginationParamsDto) {
     return this.petService.findAll(queryParams);
-  }
-
-  @Post()
-  createPet(@Body() petDto: CreatePetDto) {
-    return this.petService.create(petDto);
   }
 
   @Get(':id')
