@@ -3,6 +3,7 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
+  IsDateString,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -79,6 +80,9 @@ export class CreateOwnerDto {
   @IsNotEmpty()
   dni: string;
 
+  @IsInt()
+  districtId: number;
+
   @IsString()
   @IsNotEmpty()
   address: string;
@@ -88,6 +92,10 @@ export class CreateOwnerDto {
   @Type(() => PetDto)
   @ArrayMinSize(1)
   pets: PetDto[];
+
+  @IsDate()
+  @Transform(({ value }) => new Date(value))
+  birthDate: Date;
 }
 
 export class UpdateOwnerDto extends PartialType(CreateOwnerDto) {}

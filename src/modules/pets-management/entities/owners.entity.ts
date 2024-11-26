@@ -1,11 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Pets } from './pets.entity';
+import { Districts } from 'src/modules/administration/entities';
 
 @Entity()
 export class Owners {
@@ -35,4 +30,10 @@ export class Owners {
 
   @OneToMany(() => Pets, (pet) => pet.owner, { cascade: true })
   pets: Pets[];
+
+  @ManyToOne(() => Districts, (owner) => owner.owners, { eager: true })
+  district: Districts;
+
+  @Column({ type: 'timestamptz' })
+  birthDate: Date;
 }

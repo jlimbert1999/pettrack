@@ -2,8 +2,8 @@ import { Treatments } from 'src/modules/pets-management/entities';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum TreatmentCategory {
-  VACCINATION = 'vaccination',
-  DEWORMING = 'deworming',
+  VACCINATION = 'VACUNACION',
+  DEWORMING = 'DESPARASITACION',
 }
 
 @Entity()
