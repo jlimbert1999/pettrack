@@ -3,7 +3,7 @@ import { MedicalCenterService, TypeTreatmentService } from 'src/modules/administ
 
 import { TreatmentCategory } from 'src/modules/administration/entities';
 import { TreatmentService } from '../services';
-import { CreateTreatmentDto } from '../dtos';
+import { CreateTreatmentDto, FilterTreatmentDto } from '../dtos';
 import { PaginationParamsDto } from 'src/modules/common';
 
 @Controller('treatments')
@@ -20,7 +20,7 @@ export class TreatmentController {
   }
 
   @Get('pet/:id')
-  getPetTreatments(@Param('id') petId: string, @Query() queryParams: PaginationParamsDto) {
+  getPetTreatments(@Param('id') petId: string, @Query() queryParams: FilterTreatmentDto) {
     return this.treatmentService.getPetTreaments(petId, queryParams);
   }
 

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { MedicalCenter, TypesTreatments } from 'src/modules/administration/entities';
 import { Pets, Treatments } from '../entities';
-import { CreateTreatmentDto } from '../dtos';
+import { CreateTreatmentDto, FilterTreatmentDto } from '../dtos';
 import { PaginationParamsDto } from 'src/modules/common';
 
 @Injectable()
@@ -30,12 +30,13 @@ export class TreatmentService {
     return await this.treatRepository.save(newTreatment);
   }
 
-  async getPetTreaments(petId: string, { limit, offset }: PaginationParamsDto) {
+  async getPetTreaments(petId: string, { limit, offset, category }: FilterTreatmentDto) {
     return await this.treatRepository.find({
-      where: { pet: { id: petId } },
+      where: { pet: { id: petId }, ...(category && { typeTreatment: { category } }) },
       relations: { typeTreatment: true, medicalCenter: true },
       take: limit,
       skip: offset,
+      order: { date: 'DESC' },
     });
   }
 }
