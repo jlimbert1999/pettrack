@@ -12,5 +12,6 @@ import { Owners, Pets, Treatments } from './entities';
   imports: [TypeOrmModule.forFeature([Owners, Pets, Treatments]), FilesModule, AdministrationModule],
   controllers: [PetController, OwnerController, TreatmentController],
   providers: [PetService, OwnerService, TreatmentService],
+  exports: [TypeOrmModule],
 })
 export class PetsManagementModule {}

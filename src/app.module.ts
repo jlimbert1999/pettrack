@@ -8,10 +8,16 @@ import { FilesModule } from './modules/files/files.module';
 import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EnvConfig } from './config/env.config';
+import { OwnersModule } from './modules/owners/owners.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [EnvConfig] }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -31,6 +37,7 @@ import { EnvConfig } from './config/env.config';
     AdministrationModule,
     UserModule,
     AuthModule,
+    OwnersModule,
   ],
   controllers: [],
   providers: [],

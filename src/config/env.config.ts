@@ -5,4 +5,5 @@ export const EnvConfig = () => ({
   },
   host: process.env.HOST,
   jwt_key: process.env.JWT_TOKEN,
+  jwt_public_key: process.env.JWT_PUBLIC_TOKEN,
 });
