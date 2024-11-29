@@ -6,6 +6,7 @@ import { LoginOwnerDto } from './dtos';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { jwtOwnerPayload } from './interfaces';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class OwnersService {
@@ -14,6 +15,7 @@ export class OwnersService {
     @InjectRepository(Pets) private petRepository: Repository<Pets>,
     private configService: ConfigService,
     private jwtService: JwtService,
+    private fileService: FilesService,
   ) {}
 
   async login({ birthDate, dni }: LoginOwnerDto) {
@@ -23,19 +25,28 @@ export class OwnersService {
   }
 
   async getPets(owner: Owners) {
-    return await this.petRepository.find({ where: { owner: { id: owner.id } } });
+    const pets = await this.petRepository.find({ where: { owner: { id: owner.id } } });
+    return pets.map((pet) => this._plainPet(pet));
   }
 
   async checkAuthStatus(ownerId: string) {
     const ownerDB = await this.ownerRepository.findOneBy({ id: ownerId });
     if (!ownerDB) throw new UnauthorizedException();
-    return { token: this._generateToken(ownerDB) };
+    return ownerDB;
   }
 
   private _generateToken(owner: Owners): string {
     const payload: jwtOwnerPayload = {
       id: owner.id,
     };
-    return this.jwtService.sign(payload, { secret: this.configService.get('jwt_public_key') });
+    return this.jwtService.sign(payload);
+  }
+
+  private _plainPet(pet: Pets) {
+    const { image, ...props } = pet;
+    return {
+      image: image ? this.fileService.buildFileUrl(image, 'pets') : null,
+      ...props,
+    };
   }
 }

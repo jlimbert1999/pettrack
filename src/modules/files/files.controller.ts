@@ -1,18 +1,10 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseFilePipeBuilder,
-  Post,
-  Res,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseFilePipeBuilder, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 
 import { FilesService } from './files.service';
 import { CustomUploadFileTypeValidator } from './validators/upload-file-type.validator';
+import { Public } from '../auth/decorators';
 
 @Controller('files')
 export class FilesController {
@@ -30,6 +22,8 @@ export class FilesController {
   ) {
     return this.fileService.saveFile(file);
   }
+
+  @Public()
   @Get('pets/:imageName')
   findPetImage(@Res() res: Response, @Param('imageName') imageName: string) {
     const path = this.fileService.getStaticFile(imageName);

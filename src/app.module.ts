@@ -8,7 +8,7 @@ import { FilesModule } from './modules/files/files.module';
 import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EnvConfig } from './config/env.config';
-import { OwnersModule } from './modules/owners/owners.module';
+import { OwnerPortalModule } from './modules/owner-portal/owner-portal.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -37,7 +37,7 @@ import { join } from 'path';
     AdministrationModule,
     UserModule,
     AuthModule,
-    OwnersModule,
+    OwnerPortalModule,
   ],
   controllers: [],
   providers: [],
