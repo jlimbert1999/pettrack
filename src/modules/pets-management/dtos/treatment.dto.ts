@@ -16,5 +16,5 @@ export class CreateTreatmentDto {
 export class FilterTreatmentDto extends PaginationParamsDto {
   @IsEnum(TreatmentCategory)
   @IsOptional()
-  category?: TreatmentCategory;
+  category?: TreatmentCategory | null;
 }
