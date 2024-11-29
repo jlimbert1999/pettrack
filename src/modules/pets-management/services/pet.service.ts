@@ -1,11 +1,11 @@
-import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 
 import { FilesService } from 'src/modules/files/files.service';
 import { Breeds } from 'src/modules/administration/entities';
-import { PaginationParamsDto } from 'src/modules/common';
 import { Owners, Pets } from '../entities';
+import { FilterPetsDto } from '../dtos';
 
 @Injectable()
 export class PetService {
@@ -14,7 +14,7 @@ export class PetService {
     private fileService: FilesService,
   ) {}
 
-  async findAll({ limit, offset, term }: PaginationParamsDto) {
+  async findAll({ limit, offset, term, owner, district }: FilterPetsDto) {
     const query = this.petRepository
       .createQueryBuilder('pet')
       .leftJoinAndSelect('pet.owner', 'owner')
@@ -23,15 +23,29 @@ export class PetService {
       .skip(offset)
       .orderBy('pet.createdAt', 'DESC');
 
-    if (term) {
+    if (term || owner || district) {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where('owner.dni ILIKE :term', { term: `%${term}%` })
-            .orWhere('pet.code = :code', { code: !isNaN(Number(term)) ? Number(term) : null })
-            .orWhere(
-              `CONCAT(owner.first_name, ' ', owner.middle_name, ' ', COALESCE(owner.last_name, '')) ILIKE :term`,
-              { term: `%${term}%` },
+          if (term) {
+            qb.where('pet.name ILIKE :term', { term: `%${term}%` }).orWhere('pet.code = :code', {
+              code: !isNaN(Number(term)) ? Number(term) : null,
+            });
+          }
+          if (owner) {
+            qb.andWhere(
+              new Brackets((subQb) => {
+                subQb
+                  .where('owner.dni ILIKE :owner', { owner: `%${owner}%` })
+                  .orWhere(
+                    `CONCAT(owner.first_name, ' ', owner.middle_name, ' ', COALESCE(owner.last_name, '')) ILIKE :owner`,
+                    { owner: `%${owner}%` },
+                  );
+              }),
             );
+          }
+          if (district) {
+            qb.andWhere('district.id = :district', { district });
+          }
         }),
       );
     }

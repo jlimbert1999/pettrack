@@ -1,10 +1,9 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 
-import { PaginationParamsDto } from 'src/modules/common';
 import { BreedService } from 'src/modules/administration/services';
 import { Species } from 'src/modules/administration/entities';
-import { PetService } from '../services/pet.service';
-import { TreatmentService } from '../services';
+import { FilterPetsDto } from '../dtos';
+import { PetService } from '../services';
 
 @Controller('pets')
 export class PetController {
@@ -14,7 +13,7 @@ export class PetController {
   ) {}
 
   @Get()
-  findAll(@Query() queryParams: PaginationParamsDto) {
+  findAll(@Query() queryParams: FilterPetsDto) {
     return this.petService.findAll(queryParams);
   }
 
