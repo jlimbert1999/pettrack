@@ -9,8 +9,8 @@ export class CreateTreatmentDto {
   @IsInt()
   medicalCenterId: number;
 
-  @IsUUID()
-  petId: string;
+  @IsUUID('all', { each: true })
+  petIds: string[];
 }
 
 export class FilterTreatmentDto extends PaginationParamsDto {

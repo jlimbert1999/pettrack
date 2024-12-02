@@ -18,6 +18,7 @@ export class PetService {
     const query = this.petRepository
       .createQueryBuilder('pet')
       .leftJoinAndSelect('pet.owner', 'owner')
+      .leftJoinAndSelect('owner.district', 'district')
       .leftJoinAndSelect('pet.breed', 'breed')
       .take(limit)
       .skip(offset)
