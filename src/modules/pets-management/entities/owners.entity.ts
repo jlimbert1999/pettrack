@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Pets } from './pets.entity';
 import { Districts } from 'src/modules/administration/entities';
 
@@ -36,4 +45,18 @@ export class Owners {
 
   @Column({ type: 'timestamptz' })
   birthDate: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  formatNames() {
+    this.first_name = this.capitalize(this.first_name);
+    this.middle_name = this.capitalize(this.middle_name);
+    if (this.last_name) {
+      this.last_name = this.capitalize(this.last_name);
+    }
+  }
+
+  private capitalize(name: string): string {
+    return name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 }

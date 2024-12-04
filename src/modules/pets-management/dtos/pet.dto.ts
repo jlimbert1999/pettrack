@@ -16,7 +16,7 @@ import { AnimalSex } from '../entities';
 import { Transform, Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
 
-class PetDto {
+export class PetDto {
   @IsUUID()
   @IsOptional()
   id?: string;

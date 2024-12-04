@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { FilesService } from 'src/modules/files/files.service';
 import { Breeds, Districts } from 'src/modules/administration/entities';
 import { PaginationParamsDto } from 'src/modules/common';
-import { CreateOwnerDto, UpdateOwnerDto } from '../dtos';
+import { CreateOwnerDto, PetDto, UpdateOwnerDto } from '../dtos';
 import { Pets, Owners } from '../entities';
 
 @Injectable()
@@ -39,21 +39,15 @@ export class OwnerService {
   }
 
   async create(ownerDto: CreateOwnerDto) {
-    try {
-      const { pets, districtId, ...props } = ownerDto;
-      const newOnwner = this.ownerRepository.create({
-        ...props,
-        district: await this.districtRepository.preload({ id: districtId }),
-        pets: pets.map((pet) => ({
-          ...pet,
-          breed: this.breedRepository.create({ id: pet.breedId }),
-        })),
-      });
-      const createdPet = await this.ownerRepository.save(newOnwner);
-      return this._plainOwner(createdPet);
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
+    await this._checkDuplicateDni(ownerDto.dni);
+    const { pets, districtId, ...props } = ownerDto;
+    const newOnwner = this.ownerRepository.create({
+      district: await this.districtRepository.preload({ id: districtId }),
+      pets: await this._createPetModels(pets),
+      ...props,
+    });
+    const createdPet = await this.ownerRepository.save(newOnwner);
+    return this._plainOwner(createdPet);
   }
 
   async update(id: string, ownerDto: UpdateOwnerDto) {
@@ -112,5 +106,21 @@ export class OwnerService {
       })),
       ...props,
     };
+  }
+
+  private async _createPetModels(pets: PetDto[]) {
+    return await Promise.all(
+      pets.map(async (pet) => {
+        const breed = await this.breedRepository.preload({ id: pet.breedId });
+        return this.petRepository.create({ ...pet, breed });
+      }),
+    );
+  }
+
+  private async _checkDuplicateDni(dni: string): Promise<void> {
+    const duplicate = await this.ownerRepository.findOne({ where: { dni } });
+    if (duplicate) {
+      throw new BadRequestException(`El ${dni} ya existe`);
+    }
   }
 }
