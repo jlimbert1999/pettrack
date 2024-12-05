@@ -120,7 +120,7 @@ export class OwnerService {
   private async _checkDuplicateDni(dni: string): Promise<void> {
     const duplicate = await this.ownerRepository.findOne({ where: { dni } });
     if (duplicate) {
-      throw new BadRequestException(`El ${dni} ya existe`);
+      throw new BadRequestException(`El CI: ${dni} ya existe`);
     }
   }
 }

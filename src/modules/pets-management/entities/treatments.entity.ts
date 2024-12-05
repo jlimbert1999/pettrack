@@ -7,7 +7,7 @@ export class Treatments {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz' })
   date: Date;
 
   @ManyToOne(() => MedicalCenter, (medicalCenter) => medicalCenter.treatments)

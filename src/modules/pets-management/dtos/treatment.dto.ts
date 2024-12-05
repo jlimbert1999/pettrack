@@ -1,4 +1,5 @@
-import { IsEnum, IsInt, IsOptional, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDate, IsEnum, IsInt, IsOptional, IsUUID } from 'class-validator';
 import { TreatmentCategory } from 'src/modules/administration/entities';
 import { PaginationParamsDto } from 'src/modules/common';
 
@@ -11,6 +12,10 @@ export class CreateTreatmentDto {
 
   @IsUUID('all', { each: true })
   petIds: string[];
+
+  @IsDate()
+  @Transform(({ value }) => value && new Date(value))
+  date: Date;
 }
 
 export class FilterTreatmentDto extends PaginationParamsDto {

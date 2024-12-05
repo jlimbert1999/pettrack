@@ -16,7 +16,7 @@ export class TreatmentService {
     @InjectRepository(Pets) private petRepository: Repository<Pets>,
   ) {}
 
-  async create({ typeTreamentId, petIds, medicalCenterId }: CreateTreatmentDto) {
+  async create({ typeTreamentId, petIds, medicalCenterId, date }: CreateTreatmentDto) {
     const [typeTreatment, medicalCenter, ...pets] = await Promise.all([
       this.typeTreatmentRepository.preload({ id: typeTreamentId }),
       this.medicalCenterRepository.preload({ id: medicalCenterId }),
@@ -25,7 +25,7 @@ export class TreatmentService {
     if (!typeTreatment || !medicalCenter || pets.length === 0) {
       throw new BadRequestException('Invalid params to create treatment');
     }
-    const newTreatments = pets.map((pet) => this.treatRepository.create({ pet, typeTreatment, medicalCenter }));
+    const newTreatments = pets.map((pet) => this.treatRepository.create({ pet, typeTreatment, medicalCenter, date }));
     return await Promise.all(newTreatments.map((element) => this.treatRepository.save(element)));
   }
 
