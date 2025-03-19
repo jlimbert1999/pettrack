@@ -46,6 +46,10 @@ export class Owners {
   @Column({ type: 'timestamptz' })
   birthDate: Date;
 
+  get fullName(): string {
+    return [this.first_name, this.middle_name, this.last_name].filter(Boolean).join(' ');
+  }
+
   @BeforeInsert()
   @BeforeUpdate()
   formatNames() {

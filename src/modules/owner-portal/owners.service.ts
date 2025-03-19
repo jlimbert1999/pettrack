@@ -21,7 +21,7 @@ export class OwnersService {
   async login({ birthDate, dni }: LoginOwnerDto) {
     const owner = await this.ownerRepository.findOne({ where: { dni, birthDate } });
     if (!owner) throw new BadRequestException('Las credenciales son invalidas');
-    return { token: this._generateToken(owner) };
+    return { token: this.generateToken(owner) };
   }
 
   async getPets(owner: Owners) {
@@ -32,10 +32,10 @@ export class OwnersService {
   async checkAuthStatus(ownerId: string) {
     const ownerDB = await this.ownerRepository.findOneBy({ id: ownerId });
     if (!ownerDB) throw new UnauthorizedException();
-    return ownerDB;
+    return { fullname: ownerDB.fullName };
   }
 
-  private _generateToken(owner: Owners): string {
+  private generateToken(owner: Owners): string {
     const payload: jwtOwnerPayload = {
       id: owner.id,
     };

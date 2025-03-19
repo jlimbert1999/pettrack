@@ -17,7 +17,7 @@ import { FilesModule } from '../files/files.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow('jwt_public_key'),
-        signOptions: { expiresIn: '1h' },
+        signOptions: { expiresIn: '8h' },
       }),
       inject: [ConfigService],
     }),
