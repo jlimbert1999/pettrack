@@ -32,7 +32,7 @@ export class OwnersService {
   async checkAuthStatus(ownerId: string) {
     const ownerDB = await this.ownerRepository.findOneBy({ id: ownerId });
     if (!ownerDB) throw new UnauthorizedException();
-    return { fullname: ownerDB.fullName };
+    return { fullname: ownerDB.fullName, address: ownerDB.address, phone: ownerDB.phone };
   }
 
   private generateToken(owner: Owners): string {
