@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseUUIDPipe } from '@nestjs/common';
 import { OwnersService } from './owners.service';
 import { Public } from '../auth/decorators';
 import { LoginOwnerDto } from './dtos';
@@ -39,7 +39,7 @@ export class OwnersController {
   }
 
   @Get('detail/:id')
-  getPetDetail(@Param('id') petId: string) {
+  getPetDetail(@Param('id', ParseUUIDPipe) petId: string) {
     return this.petService.getDetail(petId);
   }
 }

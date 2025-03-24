@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 
@@ -55,8 +55,11 @@ export class PetService {
   }
 
   async getDetail(id: string) {
-    const pet = await this.petRepository.findOne({ where: { id }, relations: { owner: true } });
-    if (!pet) throw new BadRequestException(`Pet ${id} don't exist`);
+    const pet = await this.petRepository.findOne({
+      where: { id },
+      relations: { owner: true, treatments: { typeTreatment: true, medicalCenter: true } },
+    });
+    if (!pet) throw new NotFoundException(`Pet ${id} don't exist`);
     return this._plainPet(pet);
   }
 
