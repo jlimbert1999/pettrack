@@ -6,10 +6,10 @@ import { FilesModule } from '../files/files.module';
 
 import { OwnerController, PetController, TreatmentController } from './controllers';
 import { OwnerService, PetService, TreatmentService } from './services';
-import { Owners, Pets, Treatments } from './entities';
+import { CaptureLog, Owners, Pets, Treatments } from './entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Owners, Pets, Treatments]), FilesModule, AdministrationModule],
+  imports: [TypeOrmModule.forFeature([Owners, Pets, Treatments, CaptureLog]), FilesModule, AdministrationModule],
   controllers: [PetController, OwnerController, TreatmentController],
   providers: [PetService, OwnerService, TreatmentService],
   exports: [TypeOrmModule, TreatmentService, PetService],

@@ -1,18 +1,34 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 
-import { FilesService } from 'src/modules/files/files.service';
 import { Breeds } from 'src/modules/administration/entities';
-import { Owners, Pets } from '../entities';
-import { FilterPetsDto } from '../dtos';
+import { CaptureLog, Owners, Pets } from '../entities';
+import { Users } from 'src/modules/users/entities';
+
+import { CaptureLogDto, CreatePetWithCaptureDto, FilterPetsDto } from '../dtos';
+import { FilesService } from 'src/modules/files/files.service';
+import { PaginationParamsDto } from 'src/modules/common';
 
 @Injectable()
 export class PetService {
   constructor(
     @InjectRepository(Pets) private petRepository: Repository<Pets>,
+    @InjectRepository(Breeds) private breedRepository: Repository<Breeds>,
+    @InjectRepository(CaptureLog) private captureLogRepository: Repository<CaptureLog>,
     private fileService: FilesService,
   ) {}
+
+  // * Review after update
+  async create({ pet, log }: CreatePetWithCaptureDto, user: Users) {
+    const { breedId, ...props } = pet;
+    const model = this.petRepository.create({
+      ...props,
+      captures: [this.captureLogRepository.create({ ...log, user: user })],
+      breed: await this.breedRepository.preload({ id: breedId }),
+    });
+    const createdPet = await this.petRepository.save(model);
+  }
 
   async findAll({ limit, offset, term, owner, district }: FilterPetsDto) {
     const query = this.petRepository
@@ -51,7 +67,7 @@ export class PetService {
       );
     }
     const [pets, length] = await query.getManyAndCount();
-    return { pets, length };
+    return { pets: pets.map((pet) => this.plainPet(pet)), length };
   }
 
   async getDetail(id: string) {
@@ -60,10 +76,30 @@ export class PetService {
       relations: { owner: true, treatments: { typeTreatment: true, medicalCenter: true } },
     });
     if (!pet) throw new NotFoundException(`Pet ${id} don't exist`);
-    return this._plainPet(pet);
+    return this.plainPet(pet);
   }
 
-  private _plainPet(pet: Pets) {
+  async createCaptureLog(petId: string, data: CaptureLogDto, currentUser: Users) {
+    const pet = await this.petRepository.preload({ id: petId });
+    const model = this.captureLogRepository.create({ ...data, pet, user: currentUser });
+    const { user, ...props } = await this.captureLogRepository.save(model);
+    return { ...props, user: { fullname: user.fullname } };
+  }
+
+  async getCaptureLogs(id: string, { limit, offset }: PaginationParamsDto) {
+    return await this.captureLogRepository.find({
+      where: { pet: { id } },
+      skip: offset,
+      take: limit,
+      order: { date: 'DESC' },
+      relations: { user: true },
+      select: {
+        user: { fullname: true },
+      },
+    });
+  }
+
+  private plainPet(pet: Pets) {
     const { image, ...props } = pet;
     return {
       image: image ? this.fileService.buildFileUrl(image, 'pets') : null,

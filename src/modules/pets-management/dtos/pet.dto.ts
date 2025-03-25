@@ -1,26 +1,21 @@
+import { PartialType } from '@nestjs/mapped-types';
 import {
-  ArrayMinSize,
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsDateString,
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
   IsOptional,
   IsString,
-  IsUUID,
+  IsNotEmpty,
+  IsInt,
+  IsEnum,
+  IsBoolean,
+  IsDate,
+  IsDefined,
+  IsNotEmptyObject,
+  IsObject,
   ValidateNested,
 } from 'class-validator';
-import { AnimalSex } from '../entities';
 import { Transform, Type } from 'class-transformer';
-import { PartialType } from '@nestjs/mapped-types';
+import { AnimalSex } from '../entities';
 
-export class PetDto {
-  @IsUUID()
-  @IsOptional()
-  id?: string;
-
+export class CreatePetDto {
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -52,55 +47,32 @@ export class PetDto {
   @Transform(({ value }) => value && new Date(value))
   @IsOptional()
   neuter_date?: Date;
-
-  @IsDate()
-  @Transform(({ value }) => value && new Date(value))
-  @IsOptional()
-  birthDate?: Date;
 }
 
-export class CreateOwnerDto {
-  @IsString()
-  @IsNotEmpty()
-  first_name: string;
+export class UpdatePetDto extends PartialType(CreatePetDto) {}
 
-  @IsString()
-  @IsNotEmpty()
-  middle_name: string;
-
+export class CaptureLogDto {
   @IsString()
   @IsOptional()
-  last_name?: string;
-
-  @IsString()
-  @IsOptional()
-  phone?: string;
+  location: string;
 
   @IsString()
   @IsNotEmpty()
-  dni: string;
-
-  @IsInt()
-  districtId: number;
-
-  @IsString()
-  @IsNotEmpty()
-  address: string;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => PetDto)
-  @ArrayMinSize(1)
-  pets: PetDto[];
-
-  @IsDate()
-  @Transform(({ value }) => new Date(value))
-  birthDate: Date;
+  description: string;
 }
 
-export class UpdateOwnerDto extends PartialType(CreateOwnerDto) {}
+export class CreatePetWithCaptureDto {
+  @IsDefined()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CreatePetDto)
+  pet: CreatePetDto;
 
-export class CreatePetDto extends PetDto {
-  @IsUUID()
-  ownderId: string;
+  @IsDefined()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CaptureLogDto)
+  log: CaptureLogDto;
 }

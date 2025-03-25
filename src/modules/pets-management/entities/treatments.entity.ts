@@ -1,6 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Pets } from './pets.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MedicalCenter, TypesTreatments } from 'src/modules/administration/entities';
+import { Pets } from './pets.entity';
 
 @Entity()
 export class Treatments {

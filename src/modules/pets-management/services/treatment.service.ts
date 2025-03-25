@@ -29,7 +29,7 @@ export class TreatmentService {
     return await Promise.all(newTreatments.map((element) => this.treatRepository.save(element)));
   }
 
-  async getPetTreaments(petId: string, { limit = 10, offset = 0, category }: FilterTreatmentDto) {
+  async getPetTreaments(petId: string, { limit, offset, category }: FilterTreatmentDto) {
     return await this.treatRepository.find({
       where: { pet: { id: petId }, ...(category && { typeTreatment: { category } }) },
       relations: { typeTreatment: true, medicalCenter: true },

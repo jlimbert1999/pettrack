@@ -1,3 +1,4 @@
+import { CaptureLog } from 'src/modules/pets-management/entities';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
 
 export enum UserRole {
@@ -33,4 +34,6 @@ export class Users {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  @OneToMany(() => CaptureLog, (log) => log.user)
+  captures: CaptureLog[];
 }

@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, Generated, ManyToOne, OneToMany, Prim
 import { Owners } from './owners.entity';
 import { Treatments } from './treatments.entity';
 import { Breeds } from 'src/modules/administration/entities/breeds.entity';
+import { CaptureLog } from './capture-log.entity';
 
 export enum AnimalSex {
   male = 'macho',
@@ -55,4 +56,7 @@ export class Pets {
 
   @OneToMany(() => Treatments, (treatment) => treatment.pet)
   treatments: Treatments[];
+
+  @OneToMany(() => CaptureLog, (log) => log.pet, { cascade: true })
+  captures: CaptureLog[];
 }
