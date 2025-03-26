@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { Owners, Pets } from '../pets-management/entities';
 import { LoginOwnerDto } from './dtos';
 import { ConfigService } from '@nestjs/config';
@@ -19,7 +19,9 @@ export class OwnersService {
   ) {}
 
   async login({ birthDate, dni }: LoginOwnerDto) {
-    const owner = await this.ownerRepository.findOne({ where: { dni, birthDate } });
+    const owner = await this.ownerRepository.findOne({
+      where: { dni, birthDate: Raw((alias) => `DATE(${alias}) = DATE(:date)`, { date: birthDate }) },
+    });
     if (!owner) throw new BadRequestException('Sin registros para los datos ingresados');
     return { token: this.generateToken(owner) };
   }
