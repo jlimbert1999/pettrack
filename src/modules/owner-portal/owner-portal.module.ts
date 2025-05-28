@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+
 import { PetsManagementModule } from '../pets-management/pets-management.module';
 import { JwtOwnerStrategy } from './jwt-owner.strategy';
 import { OwnersController } from './owners.controller';
@@ -17,7 +18,7 @@ import { FilesModule } from '../files/files.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow('jwt_public_key'),
-        signOptions: { expiresIn: '8h' },
+        signOptions: { expiresIn: '1h' },
       }),
       inject: [ConfigService],
     }),

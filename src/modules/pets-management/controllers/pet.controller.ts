@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 
 import { BreedService } from 'src/modules/administration/services';
 import { Species } from 'src/modules/administration/entities';
@@ -38,5 +38,10 @@ export class PetController {
   @Get('capture/:id')
   getCaptureLogs(@Param('id') id: string, @Query() queryParams: PaginationParamsDto) {
     return this.petService.getCaptureLogs(id, queryParams);
+  }
+
+  @Delete('capture/:id')
+  removeCaptureLog(@Param('id') id: string) {
+    return this.petService.removeCaptureLog(+id);
   }
 }

@@ -86,6 +86,11 @@ export class PetService {
     return { ...props, user: { fullname: user.fullname } };
   }
 
+  async removeCaptureLog(id: number) {
+    await this.captureLogRepository.delete({ id });
+    return { message: 'Capture log removed' };
+  }
+
   async getCaptureLogs(id: string, { limit, offset }: PaginationParamsDto) {
     return await this.captureLogRepository.find({
       where: { pet: { id } },

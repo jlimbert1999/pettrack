@@ -38,4 +38,9 @@ export class TreatmentService {
       order: { date: 'DESC' },
     });
   }
+
+  async remove(id: number) {
+    await this.treatRepository.delete({ id });
+    return { message: 'Treatment removed' };
+  }
 }

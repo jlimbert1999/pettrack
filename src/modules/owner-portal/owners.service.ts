@@ -23,7 +23,7 @@ export class OwnersService {
       where: { dni, birthDate: Raw((alias) => `DATE(${alias}) = DATE(:date)`, { date: birthDate }) },
     });
     if (!owner) throw new BadRequestException('Sin registros para los datos ingresados');
-    return { token: this.generateToken(owner) };
+    return { token: this.generateToken(owner), fullname: owner.fullname };
   }
 
   async getPets(owner: Owners) {

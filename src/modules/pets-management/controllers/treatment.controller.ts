@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { MedicalCenterService, TypeTreatmentService } from 'src/modules/administration/services';
 
 import { TreatmentCategory } from 'src/modules/administration/entities';
@@ -37,5 +37,10 @@ export class TreatmentController {
   @Get('types')
   getTypesTreatments(@Query('category') category?: TreatmentCategory) {
     return this.typeTreatmentService.getTreatments(category);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.treatmentService.remove(+id);
   }
 }
