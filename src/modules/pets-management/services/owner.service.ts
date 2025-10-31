@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { FilesService } from 'src/modules/files/files.service';
 import { Breeds, Districts } from 'src/modules/administration/entities';
-import { PaginationParamsDto } from 'src/modules/common';
 import { CreateOwnerDto, OwnerPetDto, UpdateOwnerDto } from '../dtos';
+import { FilesService } from 'src/modules/files/files.service';
+import { PaginationParamsDto } from 'src/modules/common';
 import { Pets, Owners } from '../entities';
 
 @Injectable()
@@ -88,8 +88,12 @@ export class OwnerService {
           ),
       ],
     });
-    const updatedOwner = await this.ownerRepository.save(newModel);
+    await this.ownerRepository.save(newModel);
     this.fileService.deleteFiles(imagesToDelete);
+    const updatedOwner = await this.ownerRepository.findOne({
+      where: { id },
+      relations: { pets: { breed: true } },
+    });
     return this._plainOwner(updatedOwner);
   }
 
