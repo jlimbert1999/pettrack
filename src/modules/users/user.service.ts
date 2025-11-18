@@ -4,7 +4,7 @@ import { ILike, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { Users } from './entities/user.entity';
-import { CreateUserDto, UpdateUserDto } from './dtos';
+import { CreateUserDto, UpdateCreadentias, UpdateUserDto } from './dtos';
 import { PaginationParamsDto } from '../common';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class UserService {
 
   async create({ password, ...props }: CreateUserDto) {
     await this._checkDuplicateLogin(props.login);
-    const encryptedPassword = await this._encryptPassword(password);
+    const encryptedPassword = await this.encryptPassword(password);
     const newUser = this.userRepository.create({ ...props, password: encryptedPassword });
     const createdUser = await this.userRepository.save(newUser);
     return this._removePasswordField(createdUser);
@@ -37,12 +37,24 @@ export class UserService {
     const userDB = await this.userRepository.findOneBy({ id });
     if (!userDB) throw new NotFoundException(`El usuario editado no existe`);
     if (user.login !== userDB.login) await this._checkDuplicateLogin(user.login);
-    if (user.password) user['password'] = await this._encryptPassword(user.password);
+    if (user.password) user['password'] = await this.encryptPassword(user.password);
     const updatedUser = await this.userRepository.save({ id, ...user });
     return this._removePasswordField(updatedUser);
   }
 
-  private async _encryptPassword(password: string): Promise<string> {
+  async updateCredentials(id: string, dto: UpdateCreadentias) {
+    const user = await this.userRepository.findOneBy({ id });
+
+    if (!user) throw new NotFoundException(`User ${id} not found`);
+
+    const encryptedPassword = await this.encryptPassword(dto.password);
+
+    await this.userRepository.update({ id }, { password: encryptedPassword });
+
+    return { message: 'User credentails updated.' };
+  }
+
+  private async encryptPassword(password: string): Promise<string> {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     return bcrypt.hash(password, salt);

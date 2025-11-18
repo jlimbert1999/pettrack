@@ -1,12 +1,18 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, Param, ParseUUIDPipe } from '@nestjs/common';
+
+import { Users } from 'src/modules/users/entities/user.entity';
+import { UserService } from '../users/user.service';
+import { Public, UserRequest } from './decorators';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dtos/auth.dto';
-import { Public, UserRequest } from './decorators';
-import { Users } from 'src/modules/users/entities/user.entity';
+import { UpdateCreadentias } from '../users/dtos';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private userService: UserService,
+  ) {}
 
   @Public()
   @Post()
@@ -17,5 +23,10 @@ export class AuthController {
   @Get()
   checkAuth(@UserRequest() user: Users) {
     return this.authService.checkAuthStatus(user.id);
+  }
+
+  @Patch('credentials/:userId')
+  updateCredentials(@Param('userId', ParseUUIDPipe) userId: string, @Body() body: UpdateCreadentias) {
+    return this.userService.updateCredentials(userId, body);
   }
 }

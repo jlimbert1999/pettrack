@@ -35,19 +35,19 @@ export class OwnerService {
         .orWhere('owner.dni ILIKE :dni', { dni: `%${term}%` });
     }
     const [owners, length] = await query.getManyAndCount();
-    return { owners: owners.map((owner) => this._plainOwner(owner)), length };
+    return { owners: owners.map((owner) => this.plainOwner(owner)), length };
   }
 
   async create(ownerDto: CreateOwnerDto) {
-    await this._checkDuplicateDni(ownerDto.dni);
+    await this.checkDuplicateDni(ownerDto.dni);
     const { pets, districtId, ...props } = ownerDto;
     const newOnwner = this.ownerRepository.create({
       district: await this.districtRepository.preload({ id: districtId }),
-      pets: await this._createPetModels(pets),
+      pets: await this.createPetModels(pets),
       ...props,
     });
     const createdPet = await this.ownerRepository.save(newOnwner);
-    return this._plainOwner(createdPet);
+    return this.plainOwner(createdPet);
   }
 
   async update(id: string, ownerDto: UpdateOwnerDto) {
@@ -94,14 +94,14 @@ export class OwnerService {
       where: { id },
       relations: { pets: { breed: true } },
     });
-    return this._plainOwner(updatedOwner);
+    return this.plainOwner(updatedOwner);
   }
 
   async getDistricts() {
     return this.districtRepository.find({});
   }
 
-  private _plainOwner(owner: Owners) {
+  private plainOwner(owner: Owners) {
     const { pets, ...props } = owner;
     return {
       pets: pets.map(({ image, ...petProps }) => ({
@@ -112,7 +112,7 @@ export class OwnerService {
     };
   }
 
-  private async _createPetModels(pets: OwnerPetDto[]) {
+  private async createPetModels(pets: OwnerPetDto[]) {
     return await Promise.all(
       pets.map(async (pet) => {
         const breed = await this.breedRepository.preload({ id: pet.breedId });
@@ -121,7 +121,7 @@ export class OwnerService {
     );
   }
 
-  private async _checkDuplicateDni(dni: string): Promise<void> {
+  private async checkDuplicateDni(dni: string): Promise<void> {
     const duplicate = await this.ownerRepository.findOne({ where: { dni } });
     if (duplicate) {
       throw new BadRequestException(`El CI: ${dni} ya existe`);

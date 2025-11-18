@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import {
   IsOptional,
   IsString,
@@ -18,6 +18,7 @@ import { AnimalSex } from '../entities';
 export class CreatePetDto {
   @IsString()
   @IsNotEmpty()
+  @Transform(({ value }) => value?.trim().replace(/\s+/g, ' '))
   name: string;
 
   @IsString()
@@ -31,6 +32,7 @@ export class CreatePetDto {
 
   @IsString()
   @IsNotEmpty()
+  @Transform(({ value }) => value?.trim().replace(/\s+/g, ' '))
   color: string;
 
   @IsEnum(AnimalSex)
@@ -76,3 +78,4 @@ export class CreatePetWithCaptureDto {
   @Type(() => CaptureLogDto)
   log: CaptureLogDto;
 }
+

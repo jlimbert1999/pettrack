@@ -1,8 +1,9 @@
 import { Column, CreateDateColumn, Entity, Generated, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Owners } from './owners.entity';
-import { Treatments } from './treatments.entity';
+
 import { Breeds } from 'src/modules/administration/entities/breeds.entity';
 import { CaptureLog } from './capture-log.entity';
+import { Treatments } from './treatments.entity';
+import { Owners } from './owners.entity';
 
 export enum AnimalSex {
   male = 'macho',
@@ -21,7 +22,7 @@ export class Pets {
     type: 'int',
     unique: true,
   })
-  @Generated('increment') // !No support some hosts
+  @Generated('increment')
   code: number;
 
   @Column({ type: 'timestamptz', nullable: true })

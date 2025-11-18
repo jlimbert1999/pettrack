@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, ILike, Repository } from 'typeorm';
 
 import { Breeds } from 'src/modules/administration/entities';
 import { CaptureLog, Owners, Pets } from '../entities';

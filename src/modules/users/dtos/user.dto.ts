@@ -24,3 +24,9 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
+
+export class UpdateCreadentias {
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

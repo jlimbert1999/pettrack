@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { Users, UserRole } from 'src/modules/users/entities/user.entity';
+import { Users } from 'src/modules/users/entities/user.entity';
 import { jwtPayload, menuFrontend } from './interfaces';
 import { MENU_FRONTEND } from './constants/menu-frontend';
 import { AuthDto } from './dtos/auth.dto';
@@ -33,6 +33,7 @@ export class AuthService {
     if (!userDB) throw new UnauthorizedException();
     return { token: this._generateToken(userDB), menu: this._generateMenu(userDB.roles), roles: userDB.roles };
   }
+
 
   private _generateToken(user: Users): string {
     const payload: jwtPayload = {
