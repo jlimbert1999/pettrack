@@ -39,62 +39,70 @@ export class OwnerService {
   }
 
   async create(ownerDto: CreateOwnerDto) {
-    await this.checkDuplicateDni(ownerDto.dni);
-    const { pets, districtId, ...props } = ownerDto;
-    const newOnwner = this.ownerRepository.create({
-      district: await this.districtRepository.preload({ id: districtId }),
-      pets: await this.createPetModels(pets),
-      ...props,
-    });
-    const createdPet = await this.ownerRepository.save(newOnwner);
-    return this.plainOwner(createdPet);
+    try {
+      await this.checkDuplicateDni(ownerDto.dni);
+      const { pets, districtId, ...props } = ownerDto;
+      const newOnwner = this.ownerRepository.create({
+        district: await this.districtRepository.preload({ id: districtId }),
+        pets: await this.createPetModels(pets),
+        ...props,
+      });
+      const createdPet = await this.ownerRepository.save(newOnwner);
+      return this.plainOwner(createdPet);
+    } catch (error) {
+      console.log('ERROR CREATE PETTRACK:', error);
+    }
   }
 
   async update(id: string, ownerDto: UpdateOwnerDto) {
-    const { pets, districtId, ...props } = ownerDto;
-    const ownderDb = await this.ownerRepository.findOne({
-      where: { id },
-      relations: { pets: true },
-    });
-    if (!ownderDb) throw new BadRequestException(`Owner ${id} dont't exist`);
-    let imagesToDelete: string[] = [];
-    const newModel = this.ownerRepository.create({
-      id: ownderDb.id,
-      district: await this.districtRepository.preload({ id: districtId }),
-      ...props,
-      pets: [
-        // Update current pets if new dto containd pet id
-        ...ownderDb.pets.map((pet) => {
-          const updatedPet = ownerDto.pets.find(({ id }) => pet.id === id);
-          if (!updatedPet) return pet;
-          // Remove unused image
-          if (updatedPet.image !== undefined && pet.image && pet.image !== updatedPet.image) {
-            imagesToDelete.push(pet.image);
-          }
-          return this.petRepository.create({
-            ...pet,
-            ...updatedPet,
-            breed: this.breedRepository.create({ id: updatedPet.breedId }),
-          });
-        }),
-        // Create new pet if not exist in array db
-        ...pets
-          .filter((pet) => !ownderDb.pets.some(({ id }) => id === pet.id))
-          .map(({ breedId, ...petProps }) =>
-            this.petRepository.create({
-              ...petProps,
-              breed: this.breedRepository.create({ id: breedId }),
-            }),
-          ),
-      ],
-    });
-    await this.ownerRepository.save(newModel);
-    this.fileService.deleteFiles(imagesToDelete);
-    const updatedOwner = await this.ownerRepository.findOne({
-      where: { id },
-      relations: { pets: { breed: true } },
-    });
-    return this.plainOwner(updatedOwner);
+    try {
+      const { pets, districtId, ...props } = ownerDto;
+      const ownderDb = await this.ownerRepository.findOne({
+        where: { id },
+        relations: { pets: true },
+      });
+      if (!ownderDb) throw new BadRequestException(`Owner ${id} dont't exist`);
+      let imagesToDelete: string[] = [];
+      const newModel = this.ownerRepository.create({
+        id: ownderDb.id,
+        district: await this.districtRepository.preload({ id: districtId }),
+        ...props,
+        pets: [
+          // Update current pets if new dto containd pet id
+          ...ownderDb.pets.map((pet) => {
+            const updatedPet = ownerDto.pets.find(({ id }) => pet.id === id);
+            if (!updatedPet) return pet;
+            // Remove unused image
+            if (updatedPet.image !== undefined && pet.image && pet.image !== updatedPet.image) {
+              imagesToDelete.push(pet.image);
+            }
+            return this.petRepository.create({
+              ...pet,
+              ...updatedPet,
+              breed: this.breedRepository.create({ id: updatedPet.breedId }),
+            });
+          }),
+          // Create new pet if not exist in array db
+          ...pets
+            .filter((pet) => !ownderDb.pets.some(({ id }) => id === pet.id))
+            .map(({ breedId, ...petProps }) =>
+              this.petRepository.create({
+                ...petProps,
+                breed: this.breedRepository.create({ id: breedId }),
+              }),
+            ),
+        ],
+      });
+      await this.ownerRepository.save(newModel);
+      this.fileService.deleteFiles(imagesToDelete);
+      const updatedOwner = await this.ownerRepository.findOne({
+        where: { id },
+        relations: { pets: { breed: true } },
+      });
+      return this.plainOwner(updatedOwner);
+    } catch (error) {
+      console.log('ERROR UPDATE PETTRACK:', error);
+    }
   }
 
   async getDistricts() {

@@ -15,7 +15,7 @@ export class FilesController {
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addValidator(new CustomUploadFileTypeValidator(['png', 'jpg', 'jpeg']))
-        .addMaxSizeValidator({ maxSize: 10 * 1024 * 1024 })
+        .addMaxSizeValidator({ maxSize: 15 * 1024 * 1024 })
         .build(),
     )
     file: Express.Multer.File,
