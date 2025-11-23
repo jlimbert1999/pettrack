@@ -39,19 +39,15 @@ export class OwnerService {
   }
 
   async create(ownerDto: CreateOwnerDto) {
-    try {
-      await this.checkDuplicateDni(ownerDto.dni);
-      const { pets, districtId, ...props } = ownerDto;
-      const newOnwner = this.ownerRepository.create({
-        district: await this.districtRepository.preload({ id: districtId }),
-        pets: await this.createPetModels(pets),
-        ...props,
-      });
-      const createdPet = await this.ownerRepository.save(newOnwner);
-      return this.plainOwner(createdPet);
-    } catch (error) {
-      console.log('ERROR CREATE PETTRACK:', error);
-    }
+    await this.checkDuplicateDni(ownerDto.dni);
+    const { pets, districtId, ...props } = ownerDto;
+    const newOnwner = this.ownerRepository.create({
+      district: await this.districtRepository.preload({ id: districtId }),
+      pets: await this.createPetModels(pets),
+      ...props,
+    });
+    const createdPet = await this.ownerRepository.save(newOnwner);
+    return this.plainOwner(createdPet);
   }
 
   async update(id: string, ownerDto: UpdateOwnerDto) {
@@ -132,7 +128,6 @@ export class OwnerService {
   private async checkDuplicateDni(dni: string): Promise<void> {
     const duplicate = await this.ownerRepository.findOne({ where: { dni } });
     if (duplicate) {
-      console.log('up');
       throw new BadRequestException(`El CI: ${dni} ya existe`);
     }
   }

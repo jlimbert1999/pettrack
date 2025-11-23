@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { existsSync, unlinkSync } from 'fs';
@@ -14,7 +14,7 @@ export class FilesService {
   getStaticFile(filename: string) {
     const path = join(__dirname, '..', '..', '..', 'static', 'uploads', 'pets', 'images', filename);
     if (!existsSync(path)) {
-      throw new BadRequestException(`No file found with ${filename}`);
+      throw new NotFoundException(`No file found with ${filename}`);
     }
     return path;
   }

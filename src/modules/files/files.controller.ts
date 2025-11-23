@@ -1,4 +1,14 @@
-import { Controller, Get, Param, ParseFilePipeBuilder, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Param,
+  ParseFilePipeBuilder,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 
@@ -26,7 +36,11 @@ export class FilesController {
   @Public()
   @Get('pets/:imageName')
   findPetImage(@Res() res: Response, @Param('imageName') imageName: string) {
+    if (!/^[\w.\-]+$/.test(imageName)) {
+      throw new BadRequestException('Invalid image name');
+    }
     const path = this.fileService.getStaticFile(imageName);
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
     res.sendFile(path);
   }
 }
